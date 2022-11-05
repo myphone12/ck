@@ -4,9 +4,30 @@
 
 from random import randint
 from time import sleep
-import tkinter as tk
-from tkinter import ttk, messagebox as msg
-import threading
+import threading,sys,os
+
+def clear():
+    # for windows
+    global mulu
+    if os.name == 'nt':
+        _ = os.system('cls')
+        mulu='.\\dat.txt'
+
+    # for mac and linux(here, os.name is 'posix')
+    else:
+        _ = os.system('clear')
+        mulu='/sdcard/dat.txt'
+
+
+try:
+    raise
+    import tkinter as tk
+    from tkinter import ttk, messagebox as msg
+    old_=False
+except:
+    print("检测到您的设备不支持Tkinter模块，已自动为您加载文字模式。")
+    sleep(2.2);clear()
+    old_=True
 
 #data base
 
@@ -31,6 +52,8 @@ def cratekachi(xiandingwuxing,sixing):
                         '西风秘典','西风长枪','匣里灭辰','雨裁',
                         '祭礼大剑','钟剑','西风大剑','匣里龙吟',
                         '祭礼剑','笛剑','西风剑','班尼特','辛焱','九条裟罗']
+    if fourstarxd==[]:
+        fourstarxd=fourstar
     nr=[]
     nrs=[]
     ckdata=[0,0,0,0]
@@ -38,30 +61,23 @@ def cratekachi(xiandingwuxing,sixing):
     sx_texts=[]
     wxt=''
     sxt=''
-    wx_text.set('')
-    sx_text.set('')
-    qy.update()
-    if len(xiandingwuxing)==1:
-        muqiankachi.set('目前卡池:'+xiandingwuxing[0])
-    else:
-        muqiankachi.set('目前卡池:常驻池') 
-        fourstarxd=['迪奥娜','云堇','重云','凝光','行秋','罗莎莉亚',
-                        '安柏','凯亚','丽莎','五郎','早柚','烟绯',
-                        '托马','砂糖','诺艾尔','菲谢尔','北斗',
-                        '香菱','雷泽','芭芭拉','弓藏','祭礼弓','绝弦',
-                        '西风猎弓','昭心','祭礼残章','流浪乐章',
-                        '西风秘典','西风长枪','匣里灭辰','雨裁',
-                        '祭礼大剑','钟剑','西风大剑','匣里龙吟',
-                        '祭礼剑','笛剑','西风剑','班尼特','辛焱','九条裟罗']
-        fourstar=fourstarxd
+    if not old_:
+        wx_text.set('')
+        sx_text.set('')
+        qy.update()
+        if len(xiandingwuxing)==1:
+            muqiankachi.set('目前卡池:'+xiandingwuxing[0])
+        else:
+            muqiankachi.set('目前卡池:常驻池') 
+            fourstarxd=fourstarxd[-41:]
 
 kachis={'雷电将军':['班尼特','辛焱','九条裟罗'],'珊瑚宫心海':['班尼特','辛焱','九条裟罗'],'申鹤':['云堇','重云','凝光'],
         '温迪':['云堇','香菱','砂糖'],'神里绫人':['云堇','香菱','砂糖'],'神里绫华':['早柚','雷泽','罗莎莉亚'],
         '魈':['辛焱','北斗','迪奥娜'],'枫原万叶':['班尼特','雷泽','罗莎莉亚'],'钟离':['烟绯','北斗','行秋'],
         '甘雨':['烟绯','北斗','行秋'],'宵宫':['辛焱','迪奥娜','早柚'],'可莉':['香菱','行秋','诺艾尔'],
         '阿贝多':['砂糖','菲谢尔','班尼特'],'达达利亚':['凝光','北斗','迪奥娜'],'优菈':['辛焱','行秋','北斗'],
-        '荒泷一斗':['芭芭拉','五郎','香菱'],'八重神子':['迪奥娜','托马','菲谢尔'],'常驻池':['莫娜','迪卢克','七七','刻晴','琴'],
-        '胡桃':['迪奥娜','托马','早柚']}
+        '荒泷一斗':['芭芭拉','五郎','香菱'],'八重神子':['迪奥娜','托马','菲谢尔'],'胡桃':['迪奥娜','托马','早柚'],
+        '常驻池':['莫娜','迪卢克','七七','刻晴','琴']}
 
 nr=[]
 nrs=[]
@@ -209,9 +225,12 @@ def sl():
 
 def savedat():
     if nr==[]:
+        if old_:
+            print('错误','保存数据前请先进行抽卡！')
+            raise error(1)
         msg.showerror('错误','保存数据前请先进行抽卡！')
         return
-    with open('.\\dat.txt','a') as dat:
+    with open(mulu,'a') as dat:
         dat.write('\n')
         for i in range(len(nr)):
             dat.write(str(i+1) + '. ')
@@ -247,51 +266,88 @@ def choicekachi(juese):
         cratekachi([juese],kachis[juese])
         return
     else:
-        cratekachi(kachis[juese],kachis[juese])
+        cratekachi(kachis[juese],[])
         return
 
 #main program
 
 #old
 
-'''
-print('---原神抽卡模拟器v2.1---')
-while True:
-    print('祈愿一次[1] 祈愿十次[2]')
-    print('        退出[3]')
-    try:
-        a=int(input(':'))
-    except:
-        print('无法识别的序号.')
-        break
-    if a==1:
-        nrs,ckdata=ck(1,ckdata)
-        nr.append(nrs)
-        print('获得:')
-        for i in range(len(nrs)):
-            print(f'[{nrs[i]}]')
-        print(f'已{ckdata[1]}抽未出金.')
-        nrs=[]
-    elif a==2:
-        nrs,ckdata=ck(10,ckdata)
-        nr.append(nrs)
-        print('获得:')
-        for i in range(len(nrs)):
-            print(f'[{nrs[i]}]')
-        print(f'已{ckdata[1]}抽未出金.')
-        nrs=[]
-    elif a==3:
-        print('正在退出....')
-        break
-    else:
-        print('无法识别的序号.')
-        break
-'''
+if old_:
+    while True:
+        print('---原神抽卡模拟器v2.1.1---')
+        fgh = input('选择卡池(输入限定五星角色名称):')
+        try:
+            choicekachi(fgh)
+        except:
+            print('请输入正确内容！')
+            clear();continue
+        """
+        if not fgh:
+            fgh = input('选择卡池(输入限定五星角色名称\n输入list切换至列表模式):')
+            if fgh !="list":
+                try:
+                    choicekachi(fgh)
+                except:
+                    print('请输入正确内容！')
+                    clear();continue
+        elif fgh =="list":
+            break
+        """
+        clear()
+        print('---原神抽卡模拟器v2.1.1---')
+        
+        while True:
+            print('祈愿一次[1] 祈愿十次[2]')
+            print('保存数据[3]   退出[4]')
+            try:
+                a=int(input(':'))
+            except:
+                print('无法识别的序号.请再试.')
+                continue
+            if a==1:
+                nrs,ckdata=ck(1,ckdata)
+                nr.append(nrs)
+                clear()
+                print('---原神抽卡模拟器v2.1.1---')
+                print('获得:')
+                for i in range(len(nrs)):
+                    print(f'[{nrs[i]}]')
+                print(f'已{ckdata[1]}抽未出金.')
+                print('------------------------')
+                nrs=[]
+            elif a==2:
+                nrs,ckdata=ck(10,ckdata)
+                nr.append(nrs)
+                clear()
+                print('---原神抽卡模拟器v2.1.1---')
+                print('获得:')
+                for i in range(len(nrs)):
+                    print(f'[{nrs[i]}]')
+                print(f'已{ckdata[1]}抽未出金.')
+                print('------------------------')
+                nrs=[]
+            elif a==3:
+                try:
+                    clear()
+                    print('---原神抽卡模拟器v2.1.1---')
+                    savedat()
+                    print("保存成功！")
+                    print('------------------------')
+                except:
+                    continue
+                
+            elif a==4:
+                print('正在退出....')
+                sys.exit()
+            else:
+                print('无法识别的序号.')
+                sys.exit()
 
 #new
 
 qy=tk.Tk()
-qy.title('原神抽卡模拟器v2.1')
+qy.title('原神抽卡模拟器v2.1.1')
 qy.resizable(0, 0)
 
 p1=tk.Label(qy, text='五星:', anchor='n', font=("Microsoft Yahei UI", 9))
@@ -318,9 +374,15 @@ b3.grid(row=6, pady=10, column=0, columnspan=2, padx=6)
 
 xxx=threading.Thread(target=ccc)
 xxx.start()
-
 menubar = tk.Menu(qy)
 filemenu = tk.Menu(menubar, tearoff=False)
+'''
+p=list(kachis.keys())
+for i in range(len(kachis.keys())):
+    if p[i]=='常驻池':
+        filemenu.add_separator()
+    filemenu.add_command(label=f'{p[i]}', command=lambda:choicekachi(f'{p[i]}'))
+'''
 filemenu.add_command(label="雷电将军", command=lambda:choicekachi('雷电将军'))
 filemenu.add_command(label="神里绫华", command=lambda:choicekachi('神里绫华'))
 filemenu.add_command(label="珊瑚宫心海", command=lambda:choicekachi('珊瑚宫心海'))
@@ -341,6 +403,7 @@ filemenu.add_command(label="申鹤", command=lambda:choicekachi('申鹤'))
 filemenu.add_command(label="八重神子", command=lambda:choicekachi('八重神子'))
 filemenu.add_separator()
 filemenu.add_command(label="常驻池", command=lambda:choicekachi('常驻池'))
+
 menubar.add_cascade(label="卡池切换",menu=filemenu)
 
 menubar.add_command(label="更新数据", command=upgrade)
