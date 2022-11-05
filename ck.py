@@ -20,7 +20,6 @@ def clear():
 
 
 try:
-    raise
     import tkinter as tk
     from tkinter import ttk, messagebox as msg
     old_=False
