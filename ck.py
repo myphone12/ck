@@ -18,6 +18,7 @@ def clear():
         _ = os.system('clear')
         mulu='/sdcard/dat.txt'
 
+clear()
 
 try:
     import tkinter as tk
