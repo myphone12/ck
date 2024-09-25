@@ -4,7 +4,6 @@ import json
 class Ck:
 
     def __init__(self, set='default'):
-        
         with open('.\\database.json', 'r', encoding='utf-8') as file:
             self.data = json.load(file)
         if not isinstance(set,list):
@@ -14,6 +13,7 @@ class Ck:
                 set = self.data['default']
 
         self.dt=[0,0,0,0,0]
+        self.set = set
         self.Gold = set[0]
         self.Purple = set[1]
         self.GoldBaodi = set[2]
@@ -30,7 +30,7 @@ class Ck:
         return self.dt[0]
     
     def __eq__(self, other):
-        if self.dt == other.dt:
+        if self.set == other.set:
             return True
         return False
     
